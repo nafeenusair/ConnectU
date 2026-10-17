@@ -1,0 +1,182 @@
+{% extends 'ride_share/base.html' %}
+{% load static %}
+
+{% block title %}Create a Ride - CAMPUS{% endblock %}
+
+{% block ride_content %}
+<div class="create-ride-container">
+    <div class="create-ride-header">
+        <h1><i class="fas fa-plus"></i> Create a New Ride</h1>
+        <p>Share a ride and earn points by helping fellow students</p>
+    </div>
+
+    <div class="create-ride-form-wrapper">
+        <form method="post" class="ride-form">
+            {% csrf_token %}
+
+            <div class="form-section">
+                <h3>Location & Direction</h3>
+                <div class="form-group">
+                    <label>{{ form.direction.label }}</label>
+                    <div class="direction-options">
+                        {% for value, label in form.direction.field.choices %}
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="radio" 
+                                       name="direction" 
+                                       value="{{ value }}"
+                                       id="direction_{{ value }}"
+                                       {% if form.direction.value == value %}checked{% endif %}>
+                                <label class="form-check-label" for="direction_{{ value }}">
+                                    {{ label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if form.direction.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.direction.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.starting_location.label_tag }}
+                    <select name="starting_location" id="starting_location" class="form-control">
+                        <option value="">Select a starting location</option>
+                        {% for location in locations %}
+                            <option value="{{ location.pk }}" {% if form.starting_location.value == location.pk %}selected{% endif %}>{{ location.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="hidden" name="starting_location_fixed" id="starting_location_fixed" value="">
+                    {% if form.starting_location.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.starting_location.errors }}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Where are you starting from?</small>
+                </div>
+
+                <div class="form-group">
+                    {{ form.destination_location.label_tag }}
+                    <select name="destination_location" id="destination_location" class="form-control">
+                        <option value="">Select a destination location</option>
+                        {% for location in locations %}
+                            <option value="{{ location.pk }}" {% if form.destination_location.value == location.pk %}selected{% endif %}>{{ location.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="hidden" name="destination_location_fixed" id="destination_location_fixed" value="">
+                    {% if form.destination_location.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.destination_location.errors }}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Where are you going?</small>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Ride Details</h3>
+                <div class="form-group">
+                    {{ form.transport_method.label_tag }}
+                    {{ form.transport_method }}
+                    {% if form.transport_method.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.transport_method.errors }}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">What type of vehicle will you use?</small>
+                </div>
+
+                <div class="form-group">
+                    {{ form.departure_time.label_tag }}
+                    {{ form.departure_time }}
+                    {% if form.departure_time.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.departure_time.errors }}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">When are you leaving?</small>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Additional Information</h3>
+                <div class="form-group">
+                    {{ form.notes.label_tag }}
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.notes.errors }}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Any special requirements or information for riders?</small>
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-paper-plane"></i> Create Ride
+                </button>
+                <a href="{% url 'ride_share:all_rides' %}" class="btn btn-secondary btn-lg">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+    const UIU = "{{ UIU_LOCATION|escapejs }}";
+    const startSelect = document.getElementById('starting_location');
+    const destSelect = document.getElementById('destination_location');
+    const startFixed = document.getElementById('starting_location_fixed');
+    const destFixed = document.getElementById('destination_location_fixed');
+
+    function setFieldFixed(selectEl, hiddenEl, value){
+        if(!selectEl || !hiddenEl) return;
+        selectEl.value = value;
+        selectEl.disabled = true;
+        hiddenEl.value = value;
+    }
+
+    function setFieldEditable(selectEl, hiddenEl){
+        if(!selectEl || !hiddenEl) return;
+        selectEl.disabled = false;
+        hiddenEl.value = '';
+    }
+
+    function applyPrefill(value){
+        if(value === 'to_university'){
+            setFieldEditable(startSelect, startFixed);
+            setFieldFixed(destSelect, destFixed, UIU);
+            if(startSelect && startSelect.value === UIU){
+                startSelect.value = '';
+            }
+        } else if(value === 'to_home'){
+            setFieldFixed(startSelect, startFixed, UIU);
+            setFieldEditable(destSelect, destFixed);
+            if(destSelect && destSelect.value === UIU){
+                destSelect.value = '';
+            }
+        }
+    }
+
+    document.querySelectorAll('input[name="direction"]').forEach(r => r.addEventListener('change', function(e){
+        applyPrefill(e.target.value);
+    }));
+
+    const selected = document.querySelector('input[name="direction"]:checked');
+    if(selected) applyPrefill(selected.value);
+})();
+</script>
+{% endblock %}

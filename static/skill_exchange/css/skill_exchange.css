@@ -1,0 +1,349 @@
+/* skill_exchange.css - App specific styles */
+
+.sx-skill-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--orange-light);
+    color: var(--orange);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 2px;
+    border: 1px solid var(--orange-border);
+}
+
+.sx-skill-tag--needed {
+    background-color: var(--bg);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+
+/* Match & Session Cards */
+.sx-match-card {
+    margin-bottom: 16px;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-md, 12px) !important;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+    background: var(--surface);
+}
+
+.sx-match-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Trade Container ──────────────────────────────────────── */
+.sx-trade-container {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 0;
+    background: var(--bg);
+    border-radius: var(--radius, 8px);
+    margin: 4px 0 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.sx-trade-party {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 18px;
+    background: var(--bg);
+}
+
+.sx-trade-party--right {
+    text-align: right;
+    align-items: flex-end;
+    background: var(--bg);
+}
+
+.sx-trade-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    font-size: 20px;
+    color: var(--orange);
+    font-weight: bold;
+    user-select: none;
+    background: var(--bg);
+    flex-shrink: 0;
+    min-width: 36px;
+}
+
+.sx-user-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.sx-user-label a {
+    color: var(--orange);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.sx-user-label a:hover {
+    text-decoration: underline;
+}
+
+.sx-user-name {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.3;
+}
+
+/* ── Bottom Row: Status + Actions ─────────────────────────── */
+.sx-match-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+    gap: 12px;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.status-indicators {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    margin-top: 0 !important;
+}
+
+@media (max-width: 480px) {
+    .status-indicators {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .sx-match-bottom-row {
+        align-items: flex-start;
+    }
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.status-indicators .badge {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 600;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+}
+
+.status-indicators .badge--active {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: var(--green, #22c55e);
+    color: var(--green, #22c55e);
+}
+
+.actions {
+    margin-top: 0 !important;
+}
+
+.actions form {
+    display: flex;
+    gap: 8px;
+}
+
+
+.sx-partner-message-wrap {
+    margin-top: 12px;
+}
+
+.sx-partner-message-wrap p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    padding: 10px 14px;
+    background: var(--bg);
+    border-radius: var(--radius, 8px);
+    border-left: 3px solid var(--border);
+    margin: 0 0 6px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.sx-partner-message-wrap p a {
+    color: var(--orange);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.sx-partner-message-wrap p a:hover {
+    text-decoration: underline;
+}
+
+
+.sx-partner-message-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    transition: none;
+}
+
+
+.sx-partner-message-text.is-expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* See more / See less */
+.sx-see-more-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--orange);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    gap: 3px;
+    margin-top: 2px;
+    transition: opacity 0.15s;
+}
+
+.sx-see-more-btn:hover {
+    opacity: 0.75;
+}
+
+.sx-see-more-btn.visible {
+    display: inline-flex;
+}
+
+/* Form Styles */
+.sx-form-group {
+    margin-bottom: 20px;
+}
+
+.sx-form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.sx-form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 14px;
+    background: var(--surface);
+    color: var(--text);
+}
+
+.sx-form-control:focus {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 0 2px var(--orange-light);
+}
+
+/* Empty States */
+.sx-empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-muted);
+}
+
+.sx-empty-state svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+.sx-post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    gap: 8px;
+}
+
+.sx-post-header__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sx-post-date {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.sx-delete-btn {
+    color: var(--red) !important;
+    border-color: var(--red-light, rgba(239,68,68,0.3)) !important;
+    font-size: 12px !important;
+}
+
+.sx-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.08) !important;
+}
+
+/* ── Skills offering ⇄ seeking layout ────────────────────── */
+.sx-post-skills {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius, 8px);
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.sx-post-skill-group {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 16px;
+}
+
+.sx-post-skill-group--right {
+    background: var(--bg);
+    text-align: left;
+    border-top: 1px solid var(--border);
+}
+
+.sx-post-skill-divider {
+    display: none;
+}
+
+.sx-post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+}

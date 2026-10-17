@@ -1,0 +1,264 @@
+{% extends "marketplace/base.html" %}
+{% load static %}
+
+{% block title %}{{ listing.title }} — Marketplace{% endblock %}
+
+{% block content %}
+
+<div class="campus-header">
+  <div class="campus-header__row">
+
+    <div>
+      {% if listing.category %}
+        <span class="badge badge--active"
+              style="
+                background: var(--orange);
+                color: #fff;
+                border: none;
+                margin-bottom: 8px;
+                display: inline-block;
+              ">
+          {{ listing.category.name }}
+        </span>
+      {% endif %}
+
+      <h1>{{ listing.title }}</h1>
+    </div>
+
+    {% if user == listing.seller and listing.status != "sold" %}
+      <a href="{% url 'marketplace:edit_listing' listing.id %}"
+         class="btn btn--outline btn--sm">
+        Edit Listing
+      </a>
+    {% endif %}
+
+    {% if user.is_authenticated and user != listing.seller and listing.status == "active" %}
+      <div style="display:flex; flex-wrap:wrap; gap: 10px; align-items:center;">
+        {% if active_order and active_order.thread %}
+          <a href="{% url 'threads:thread_detail' thread_id=active_order.thread.id %}"
+             class="btn btn--primary btn--sm">
+            Open Order Chat
+          </a>
+        {% elif pending_request %}
+          <button class="btn btn--outline btn--sm" disabled>
+            Order request pending ({{ pending_request.quantity }})
+          </button>
+        {% elif listing.stock == 0 %}
+          <button class="btn btn--outline btn--sm" disabled>
+            Out of stock
+          </button>
+        {% else %}
+          <form action="{% url 'marketplace:request_chat' listing.id %}"
+                method="post"
+                style="display:flex; flex-wrap:wrap; gap: 10px; align-items:center;">
+            {% csrf_token %}
+            <input type="number"
+                   name="quantity"
+                   value="1"
+                   min="1"
+                   max="{{ listing.stock }}"
+                   style="width: 94px; padding: 8px 10px; border-radius: var(--radius); border: 1.5px solid var(--border-dark); background: var(--surface); color: var(--text); font-size: 13px;"
+                   required />
+            <button type="submit" class="btn btn--primary btn--sm">
+              Request Order
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% if user == listing.seller %}
+
+  {% if pending_orders_count > 0 %}
+
+    <div style="
+      margin-bottom: 20px;
+      padding: 14px 18px;
+      background: var(--orange-light);
+      border: 1px solid var(--orange-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    ">
+
+      <span style="font-size: 14px; color: var(--text);">
+        You have
+        <strong>{{ pending_orders_count }}</strong>
+        order request{{ pending_orders_count|pluralize }}.
+      </span>
+
+      <a href="{% url 'marketplace:review_orders' listing.id %}"
+         class="btn btn--primary btn--sm">
+        Review Orders
+      </a>
+
+    </div>
+
+  {% endif %}
+
+{% endif %}
+{% comment %} Orders are managed from the unified Orders page. {% endcomment %}
+
+<div class="detail-grid">
+
+  <div>
+
+    {% if listing.description %}
+      <div class="section">
+        <p class="section__label">Description</p>
+
+        <p style="
+          font-size: 15px;
+          line-height: 1.65;
+          white-space: pre-wrap;
+        ">
+          {{ listing.description }}
+        </p>
+      </div>
+    {% endif %}
+
+    {% with listing.photos.all as photos %}
+
+      {% if photos %}
+
+        <div class="section">
+
+          <p class="section__label">Photos</p>
+
+          <div class="photo-grid">
+
+            {% for lp in photos %}
+
+              <a href="{{ lp.photo.file.url }}" target="_blank">
+
+                <img src="{{ lp.photo.file.url }}"
+                     alt="{{ listing.title }}" />
+
+              </a>
+
+            {% endfor %}
+
+          </div>
+
+        </div>
+
+      {% endif %}
+
+    {% endwith %}
+
+  </div>
+
+  <div>
+
+    <div class="card">
+
+      <p class="section__label" style="margin-bottom: 0;">
+        Details
+      </p>
+
+      <dl class="detail-meta-list">
+
+        <div class="detail-meta-row">
+          <dt>Price</dt>
+
+          <dd style="
+            font-weight: 600;
+            color: var(--orange);
+          ">
+            ৳{{ listing.price }}
+          </dd>
+        </div>
+
+        <div class="detail-meta-row">
+          <dt>Status</dt>
+
+          <dd>
+
+            {% if listing.status == "active" %}
+
+              <span class="badge badge--active">
+                Active
+              </span>
+
+            {% elif listing.status == "sold" %}
+
+              <span class="badge badge--pending">
+                Sold
+              </span>
+
+            {% else %}
+
+              <span class="badge">
+                {{ listing.status }}
+              </span>
+
+            {% endif %}
+
+          </dd>
+        </div>
+
+        <div class="detail-meta-row">
+          <dt>Category</dt>
+
+          <dd>
+            {% if listing.category %}
+              {{ listing.category.name }}
+            {% else %}
+              —
+            {% endif %}
+          </dd>
+        </div>
+
+        <div class="detail-meta-row">
+          <dt>Posted by</dt>
+
+          <dd>
+            <a href="{% url 'accounts:profile' listing.seller.handle %}">
+              {{ listing.seller.handle }}
+            </a>
+          </dd>
+        </div>
+
+        <div class="detail-meta-row">
+          <dt>Posted on</dt>
+
+          <dd>
+            {{ listing.created_at|date:"M d, Y" }}
+          </dd>
+        </div>
+
+        <div class="detail-meta-row">
+          <dt>Stock</dt>
+
+          <dd>
+            {% if listing.stock and listing.stock > 0 %}
+              {{ listing.stock }} available
+            {% else %}
+              Out of stock
+            {% endif %}
+          </dd>
+        </div>
+
+      </dl>
+
+    </div>
+
+    <a href="{% url 'marketplace:listing_list' %}"
+       class="btn btn--ghost btn--sm"
+       style="
+         margin-top: 12px;
+         width: 100%;
+         justify-content: center;
+       ">
+      ← Back to Listings
+    </a>
+
+  </div>
+
+</div>
+
+{% endblock %}

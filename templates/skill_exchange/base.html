@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Skill Exchange | CAMPUS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'skill_exchange/css/skill_exchange.css' %}">
+{% endblock %}
+
+{% block subnav %}
+<div class="campus-subnav">
+  <div class="campus-subnav__inner">
+    <a href="{% url 'skill_exchange:post_list' %}" class="{% if request.resolver_match.url_name == 'post_list' %}active{% endif %}">
+        My Posts
+    </a>
+    <a href="{% url 'skill_exchange:match_list' %}" class="{% if request.resolver_match.url_name == 'match_list' %}active{% endif %}">
+        Matches
+    </a>
+    <a href="{% url 'skill_exchange:session_list' %}" class="{% if request.resolver_match.url_name == 'session_list' %}active{% endif %}">
+        Sessions
+    </a>
+    <div class="subnav-divider"></div>
+    <a href="{% url 'skill_exchange:post_create' %}" class="{% if request.resolver_match.url_name == 'post_create' %}active{% endif %}">
+        + Create Post
+    </a>
+  </div>
+</div>
+{% endblock %}

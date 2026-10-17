@@ -1,0 +1,164 @@
+{% extends "lost_found/base.html" %}
+{% load static %}
+{% block title %}New Post{% endblock %}
+
+{% block content %}
+
+<div class="campus-wrap" style="max-width: 680px;">
+  <div class="campus-header">
+    <div class="campus-header__row">
+      <div>
+        <h1>New Post</h1>
+        <p>Report a lost or found item on campus.</p>
+      </div>
+    </div>
+  </div>
+  <form class="card" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {# Non-field errors #}
+    {% if form.non_field_errors %}
+      <div class="message message--error" style="margin-bottom: 20px;">
+        {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+      </div>
+    {% endif %}
+
+    {# ── What happened ─────────────────────────────────────── #}
+    <p class="form-section-title">What happened</p>
+
+    <div class="form-group">
+      <label for="{{ form.type.id_for_label }}">Type</label>
+      {{ form.type }}
+      {% if form.type.errors %}
+        <ul class="form-errors">{% for e in form.type.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.title.id_for_label }}">Title</label>
+      {{ form.title }}
+      <p class="form-help">Brief description, e.g. "Blue water bottle" or "iPhone 14"</p>
+      {% if form.title.errors %}
+        <ul class="form-errors">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.description.id_for_label }}">Description</label>
+      {{ form.description }}
+      <p class="form-help">Include colour, brand, size, and any unique markings.</p>
+      {% if form.description.errors %}
+        <ul class="form-errors">{% for e in form.description.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+
+    {# ── Where & when ──────────────────────────────────────── #}
+    <p class="form-section-title" style="margin-top: 28px;">Where &amp; when</p>
+
+    <div class="form-group">
+      <label for="{{ form.location.id_for_label }}">Location</label>
+      {{ form.location }}
+      {% if form.location.errors %}
+        <ul class="form-errors">{% for e in form.location.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.lost_or_found_date.id_for_label }}">Date Lost / Found</label>
+      {{ form.lost_or_found_date }}
+      {% if form.lost_or_found_date.errors %}
+        <ul class="form-errors">{% for e in form.lost_or_found_date.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+
+    {# ── Classification ────────────────────────────────────── #}
+    <p class="form-section-title" style="margin-top: 28px;">Classification</p>
+
+    <div class="form-group">
+      <label for="{{ form.category.id_for_label }}">Category</label>
+      {{ form.category }}
+      {% if form.category.errors %}
+        <ul class="form-errors">{% for e in form.category.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+
+    {% if form.tags %}
+      <div class="form-group">
+        <label>Tags <span class="text-muted">(optional — helps with matching)</span></label>
+        {% if form.tags.errors %}
+          <ul class="form-errors">{% for e in form.tags.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
+
+        <div class="tag-picker">
+          <div class="selected-chips" id="e-selectedTags">
+            <span class="chips-placeholder" id="e-tagsPlaceholder"
+                  {% if selected_tags %}style="display:none"{% endif %}>
+              None selected — pick tags to help matching
+            </span>
+            {% for tag in selected_tags %}
+              <span class="selected-chip" data-id="{{ tag.id }}">
+                {{ tag.name }}
+                <button class="chip-remove" type="button" onclick="removeTag('{{ tag.id }}')">×</button>
+              </span>
+            {% endfor %}
+          </div>
+
+          <div id="tag-hidden-inputs">
+            {% for tag in selected_tags %}
+              <input type="hidden" name="tags" value="{{ tag.id }}">
+            {% endfor %}
+          </div>
+
+          <input type="text"
+                 id="e-tagSearch"
+                 class="form-group input"
+                 placeholder="Search tags..."
+                 autocomplete="off"
+                 style="margin-top: 10px; display: block; width: 100%; padding: 8px 11px; border: 1.5px solid var(--border-dark); border-radius: var(--radius) var(--radius) 0 0; font-family: inherit; font-size: 14px; outline: none; background: var(--surface); color: var(--text); border-bottom-color: var(--border);">
+
+          <div class="skills-pool tags-pool" id="e-tagsPool">
+            {% for tag in all_tags %}
+              <div class="pool-item {% if tag.id in selected_tag_ids %}pool-item--selected{% endif %}"
+                   data-id="{{ tag.id }}"
+                   data-name="{{ tag.name }}"
+                   onclick="addTag(this)"
+                   {% if tag.id in selected_tag_ids %}style="display:none"{% endif %}>
+                {{ tag.name }}
+              </div>
+            {% endfor %}
+            <div class="pool-empty" id="e-tagsPoolEmpty" style="display:none;">No matching tags</div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {# ── Photos ────────────────────────────────────────────── #}
+    <p class="form-section-title" style="margin-top: 28px;">Photos <span class="text-muted" style="font-weight: 400; text-transform: none; font-size: 13px;">(optional)</span></p>
+
+    <div class="form-group">
+      <label for="{{ form.uploaded_photos.id_for_label }}">Upload Photos</label>
+      {{ form.uploaded_photos }}
+      <p class="form-help">You can select multiple images.</p>
+      {% if form.uploaded_photos.errors %}
+        <ul class="form-errors">{% for e in form.uploaded_photos.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+      {# Preview populated by lost_found.js #}
+      <div id="photo-preview" class="photo-preview"></div>
+    </div>
+
+    {# ── Actions ───────────────────────────────────────────── #}
+    <hr class="divider">
+
+    <div class="flex flex-gap-8">
+      <button type="submit" class="btn btn--primary">Create Post</button>
+      <a href="{% url 'lost_found:post_list' %}" class="btn btn--ghost">Cancel</a>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'lost_found/js/lost_found.js' %}"></script>
+{% endblock %}

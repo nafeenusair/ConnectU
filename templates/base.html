@@ -1,0 +1,188 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ConnectU{% endblock %}</title>
+
+  {# Global design system — variables, reset, all shared components #}
+  <link rel="stylesheet" href="{% static 'css/campus.css' %}">
+  <link rel="stylesheet" href="{% static 'notifications/css/drawer.css' %}">
+  
+  {# Lightbox CSS #}
+  <link rel="stylesheet" href="{% static 'css/lightbox.css' %}">
+
+  {# Code Formatter CSS #}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="{% static 'css/code_block.css' %}">
+
+  {# App-specific CSS (each app's base or template overrides this block) #}
+  {% block extra_css %}{% endblock %}
+
+  {# ── Dark mode: apply saved theme BEFORE body renders to prevent flash ── #}
+  <script>
+    (function () {
+      var t = localStorage.getItem('campus-theme');
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+  {# ── Global navigation ────────────────────────────────────── #}
+  <nav class="campus-nav" id="campus-nav">
+    <div class="campus-nav__inner">
+
+      {# Brand #}
+      <a href="{% url 'home' %}" class="campus-nav__brand">
+        <span>ConnectU</span>
+      </a>
+
+      {# Five platform features #}
+      <ul class="campus-nav__links">
+        <li>
+          <a href="{% url 'skill_exchange:post_list' %}"
+             {% if request.resolver_match.app_name == 'skill_exchange' %}class="active"{% endif %}>
+            Skill Exchange
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'forum:announcement_threads' %}"
+             {% if request.resolver_match.app_name == 'forum' %}class="active"{% endif %}>
+            Forum
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'lost_found:post_list' %}"
+             {% if request.resolver_match.app_name == 'lost_found' %}class="active"{% endif %}>
+            Lost &amp; Found
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'ride_share:all_rides' %}"
+             {% if request.resolver_match.app_name == 'ride_share' %}class="active"{% endif %}>
+            Ride Share
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'marketplace:listing_list' %}"
+             {% if request.resolver_match.app_name == 'marketplace' %}class="active"{% endif %}>
+            Marketplace
+          </a>
+        </li>
+      </ul>
+
+      {# Right: dark mode toggle, notifications, auth #}
+      <div class="nav-icons">
+        <button
+          class="theme-toggle"
+          id="theme-toggle"
+          aria-label="Switch to dark mode"
+          type="button"
+        >
+          {# Moon — shown in light mode #}
+          <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          {# Sun — shown in dark mode #}
+          <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+
+        {% if user.is_authenticated %}
+          <div class="notif-dropdown" id="notif-dropdown">
+            <button class="notif-btn">
+              <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+                <path d="M2.8 2.06A1.75 1.75 0 0 1 4.41 1h7.18c.7 0 1.333.417 1.61 1.06l2.74 6.395c.04.093.06.194.06.295v4.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25v-4.5c0-.101.02-.202.06-.295Zm1.61.44a.25.25 0 0 0-.23.152L1.887 8H4.75a.75.75 0 0 1 .6.3L6.625 10h2.75l1.275-1.7a.75.75 0 0 1 .6-.3h2.863L11.82 2.652a.25.25 0 0 0-.23-.152Zm10.09 7h-2.875l-1.275 1.7a.75.75 0 0 1-.6.3h-3.5a.75.75 0 0 1-.6-.3L4.375 9.5H1.5v3.75c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25Z"></path>
+              </svg>
+              
+              <span class="notif-badge" id="notif-badge"></span>
+            </button>
+            
+            <div class="notif-list" id="notif-list" hidden>
+              <div class="notif-list-header">Notifications</div>
+              <div class="notif-items"></div>
+            </div>
+          </div>
+        {% endif %}
+        {# ── Hamburger button (mobile only) ───────────────────────── #}
+        <button class="hamburger" id="hamburger-btn" aria-label="Open menu" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="15" height="15" fill="currentColor">
+        <path d="M96 160C96 142.3 110.3 128 128 128L512 128C529.7 128 544 142.3 544 160C544 177.7 529.7 192 512 192L128 192C110.3 192 96 177.7 96 160zM96 320C96 302.3 110.3 288 128 288L512 288C529.7 288 544 302.3 544 320C544 337.7 529.7 352 512 352L128 352C110.3 352 96 337.7 96 320zM544 480C544 497.7 529.7 512 512 512L128 512C110.3 512 96 497.7 96 480C96 462.3 110.3 448 128 448L512 448C529.7 448 544 462.3 544 480z"/>
+        </svg>
+        </button>
+
+      </div>
+
+      <div class="nav-user">
+        {% if user.is_authenticated %}
+          <a href="{% url 'accounts:myself' %}">@{{ user.handle|truncatechars:18 }}</a>
+          <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="nav-logout-btn">Log out</button>
+          </form>
+        {% else %}
+          <a href="{% url 'accounts:login' %}">Log in</a>
+          <a href="{% url 'accounts:register' %}">Sign up</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </nav>
+
+  {# ── App sub-navigation (optional, filled by app bases) ───── #}
+  {% block subnav %}{% endblock %}
+
+  {# ── Flash messages ───────────────────────────────────────── #}
+  {% if messages %}
+    <div class="campus-wrap" style="padding-top: 16px;">
+      <div class="campus-messages">
+        {% for message in messages %}
+          <div class="message message--{{ message.tags|default:'info' }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {# ── Page content ─────────────────────────────────────────── #}
+  <main class="campus-wrap" style="padding-top: 8px; padding-bottom: 48px;">
+    {% block content %}{% endblock %}
+  </main>
+
+  {# ── Scripts ──────────────────────────────────────────────── #}
+  <script src="{% static 'js/campus.js' %}"></script>
+  <script src="{% static 'notifications/js/drawer.js' %}"></script>
+  
+  {# Lightbox JS #}
+  <script src="{% static 'js/lightbox.js' %}"></script>
+  
+  {# Code Formatter JS #}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="{% static 'js/code_block.js' %}"></script>
+  
+
+  {% block extra_js %}{% endblock %}
+
+  {# ── Bulletproof Lightbox Modal ───────────────────────────── #}
+  <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out;">
+    <img id="lightbox-img" src="" alt="" style="max-width: 90%; max-height: 90%; object-fit: contain;">
+  </div>
+
+</body>
+</html>

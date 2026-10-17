@@ -1,0 +1,651 @@
+/* ============================================================
+   profile.css — Profile-specific styles only.
+   Loaded after campus.css (which owns all variables,
+   reset, body, form, button, and card base styles).
+   campus.css handles dark-mode variable overrides globally.
+   ============================================================ */
+
+/* ── Profile header card ───────────────────────────────────── */
+.profile-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-cover {
+  height: 110px;
+  background: linear-gradient(135deg, var(--orange) 0%, #ffaa00 100%);
+  position: relative;
+}
+
+/* Subtle dot pattern on the cover */
+.profile-cover-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px),
+    radial-gradient(circle at 80% 20%, #fff 1px, transparent 1px),
+    radial-gradient(circle at 60% 80%, #fff 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* XP / rank badge pinned to the cover */
+.xp-cover-badge {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: rgba(255,255,255,.18);
+  border: 1.5px solid rgba(255,255,255,.35);
+  border-radius: 30px;
+  padding: 4px 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.xp-cover-badge .lvl {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.xp-cover-badge .pts {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+}
+
+/* Row with avatar, name, edit button */
+.profile-info-row {
+  padding: 0 24px 20px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  position: relative;
+}
+
+.profile-avatar-wrap {
+  margin-top: -40px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), #ffaa00);
+  /* Use --surface so the ring adapts in dark mode */
+  border: 4px solid var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+.profile-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Hide initials span when photo img is present */
+.profile-avatar img ~ #avatarInitials,
+.profile-avatar:has(img[src]) #avatarInitials { display: none; }
+
+.profile-details {
+  flex: 1;
+  padding-top: 12px;
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-email {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.profile-handle {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+/* ── Info cards grid ───────────────────────────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+}
+
+.info-card.full { grid-column: 1 / -1; }
+
+.card-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.info-row:last-child { margin-bottom: 0; }
+
+.info-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.info-value .empty,
+.info-value.empty {
+  color: var(--text-light);
+  font-style: italic;
+  font-weight: 400;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 0;
+  text-align: left;
+}
+
+.bio-text .empty {
+  color: var(--text-light);
+  font-style: italic;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 0;
+  text-align: left;
+}
+
+.bio-text .empty {
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* ── Skills display (view page) ────────────────────────────── */
+.skills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-tag {
+  background: var(--orange-light);
+  color: var(--orange-hover);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--orange-border);
+}
+
+.skill-tag.empty-msg {
+  background: var(--gray-light);
+  color: var(--text-light);
+  border-color: var(--border);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ── Skill chip picker (edit page) ─────────────────────────── */
+
+/* Selected chips box */
+.selected-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 6px;
+  min-height: 44px;
+  max-height: 96px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border-dark);
+  border-radius: var(--radius);
+  margin-bottom: 0;
+  background: var(--orange-light);
+  transition: border-color .15s;
+}
+
+.selected-chips:focus-within { border-color: var(--orange); }
+
+.selected-chips::-webkit-scrollbar { width: 4px; }
+.selected-chips::-webkit-scrollbar-thumb {
+  background: var(--orange-border);
+  border-radius: 10px;
+}
+
+.chips-placeholder {
+  font-size: 13px;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* Individual selected chip */
+.selected-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px 3px 11px;
+  border-radius: 20px;
+  animation: chipPop .15s ease;
+}
+
+@keyframes chipPop {
+  from { transform: scale(.75); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.chip-remove {
+  background: rgba(255,255,255,.25);
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: background .12s;
+  font-family: inherit;
+}
+
+.chip-remove:hover { background: rgba(255,255,255,.45); }
+
+/* Skill search input attached to pool — radius flattened on bottom */
+#e-skillSearch {
+  border-bottom-left-radius:  0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-bottom-color: var(--border) !important;
+  margin-bottom: 0;
+}
+
+/* Scrollable pool of available skills */
+.skills-pool {
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1.5px solid var(--border-dark);
+  border-top: none;
+  border-bottom-left-radius:  var(--radius);
+  border-bottom-right-radius: var(--radius);
+  background: var(--surface);
+  padding: 4px 0;
+}
+
+.skills-pool::-webkit-scrollbar { width: 4px; }
+.skills-pool::-webkit-scrollbar-thumb {
+  background: var(--border-dark);
+  border-radius: 10px;
+}
+
+.pool-item {
+  padding: 8px 14px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+
+.pool-item:hover {
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+.pool-item--selected { display: none; }
+
+.pool-empty {
+  padding: 14px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* ── Photo upload widget (edit page) ───────────────────────── */
+.photo-upload-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.photo-upload-preview {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--orange), #ffaa00);
+  border: 3px solid var(--orange-border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  position: relative;
+}
+
+.photo-upload-preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-upload-right {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Styled label that triggers the hidden file input */
+.btn-choose-photo {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1.5px solid var(--orange-border);
+  padding: 6px 13px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s;
+  font-family: inherit;
+  width: fit-content;
+}
+
+.btn-choose-photo:hover { background: var(--orange-border); }
+
+.photo-filename {
+  font-size: 12px;
+  color: var(--orange);
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* ── Form section title (edit page) ────────────────────────── */
+/* Reuses .form-section-title from lost_found.css — no override needed */
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .cards-grid         { grid-template-columns: 1fr; }
+  .profile-info-row   { flex-wrap: wrap; }
+  .profile-info-row .btn { margin-left: 0; margin-top: 10px; }
+}
+/* ── Skill card title row (view page) ──────────────────────── */
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* remove the margin-bottom from card-title when inside card-title-row */
+.card-title-row .card-title {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* ── Skill tag blocks (view page) ──────────────────────────── */
+.skills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-tag-block {
+  position: relative;
+  background: var(--orange-light);
+  border: 1px solid var(--orange-border);
+  border-radius: var(--radius-md);
+  padding: 10px 36px 10px 12px; /* right padding reserves space for × */
+  min-width: 140px;
+}
+
+.skill-tag-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+/* override the old inline .skill-tag inside a block */
+.skill-tag-block .skill-tag {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--orange-hover);
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.skill-role-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.skill-role--teach {
+  background: #dcfce7;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.skill-role--learn {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.skill-role--both {
+  background: var(--orange-light);
+  color: var(--orange);
+  border: 1px solid var(--orange-border);
+}
+
+.skill-tag-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.skill-proficiency { font-weight: 600; }
+.skill-exp         { color: var(--text-light); }
+
+/* Remove button on each skill block */
+.skill-remove-form {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  margin: 0;
+}
+
+.skill-remove-btn {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color .12s;
+  font-family: inherit;
+}
+
+.skill-remove-btn:hover { color: var(--orange); }
+
+/* Empty state */
+.skills-empty {
+  font-size: 13px;
+  color: var(--text-light);
+  font-style: italic;
+  padding: 4px 0;
+}
+
+.skills-empty a {
+  color: var(--orange);
+  font-style: normal;
+  font-weight: 500;
+  margin-left: 6px;
+  text-decoration: none;
+}
+
+.skills-empty a:hover { text-decoration: underline; }
+
+/* ── Pending submissions section (view page) ───────────────── */
+.submissions-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.submissions-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.submission-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.submission-row:last-child { border-bottom: none; }
+
+.submission-name {
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+  min-width: 120px;
+}
+
+.submission-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.submission-row--pending .submission-badge {
+  background: #fef9c3;
+  color: #a16207;
+  border: 1px solid #fde68a;
+}
+
+.submission-row--verified .submission-badge {
+  background: #dcfce7;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.submission-row--approved .submission-badge {
+  background: #dcfce7;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.submission-row--rejected .submission-badge {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.submission-note {
+  width: 100%;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── form-label-optional helper (add_skill page) ───────────── */
+.form-label-optional {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-light);
+  margin-left: 4px;
+}
+
+/* ── form-error helper ─────────────────────────────────────── */
+.form-error {
+  font-size: 12px;
+  color: #dc2626;
+  margin-top: 4px;
+}

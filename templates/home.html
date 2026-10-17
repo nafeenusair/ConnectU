@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}ConnectU — The Unified Student Community Platform{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# ── Hero ──────────────────────────────────────────────────── #}
+<div class="hero">
+  <p class="hero__eyebrow">Digitizing Campus Life</p>
+
+  <h1 class="hero__title">
+    The unified student<br>
+    <span>community platform.</span>
+  </h1>
+
+  <p class="hero__subtitle">
+    ConnectU brings together various collaborative academic modules such as skill exchange, discussion forum, lost &amp; found,
+    ride sharing, and a marketplace — built for students, by students.
+  </p>
+
+  <div class="hero__meta">
+    <div class="hero__stat">
+      <span class="hero__stat-num">5</span>
+      <span class="hero__stat-label">Modules</span>
+    </div>
+    <div class="hero__stat-divider"></div>
+    <div class="hero__stat">
+      <span class="hero__stat-num">Free</span>
+      <span class="hero__stat-label">Always</span>
+    </div>
+    <div class="hero__stat-divider"></div>
+    <div class="hero__stat">
+      <span class="hero__stat-num">Open</span>
+      <span class="hero__stat-label">Beta</span>
+    </div>
+  </div>
+</div>
+
+{# ── Features ──────────────────────────────────────────────── #}
+<div style="padding: 4px 0 0;">
+  <p class="features-label">Platform modules</p>
+
+  <div class="features-grid">
+
+    {# 1. Skill Exchange #}
+    <a href="{% url 'skill_exchange:post_list' %}" class="feature-card">
+      <div class="feature-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 16V4m0 0L3 8m4-4l4 4"/>
+          <path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
+        </svg>
+      </div>
+      <p class="feature-card__title">Skill Exchange</p>
+      <p class="feature-card__desc">
+        Trade knowledge with peers. Teach what you know, learn what you need.
+      </p>
+      <span class="feature-card__link">Open →</span>
+    </a>
+
+    {# 2. Discussion Forum #}
+    <a href="{% url 'forum:public_threads' %}" class="feature-card">
+      <div class="feature-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <p class="feature-card__title">Discussion Forum</p>
+      <p class="feature-card__desc">
+        Ask questions, share ideas, and find study groups for any subject.
+      </p>
+      <span class="feature-card__link">Open →</span>
+    </a>
+
+    {# 3. Lost & Found #}
+    <a href="{% url 'lost_found:post_list' %}" class="feature-card">
+      <div class="feature-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </div>
+      <p class="feature-card__title">Lost &amp; Found</p>
+      <p class="feature-card__desc">
+        Report lost items or help reunite found ones with their owners.
+      </p>
+      <span class="feature-card__link">Open →</span>
+    </a>
+
+    {# 4. Ride Share #}
+    <a href="{% url 'ride_share:all_rides' %}" class="feature-card">
+      <div class="feature-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="3" width="15" height="13" rx="2"/>
+          <path d="M16 8h4l3 5v3h-7V8z"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/>
+          <circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+      </div>
+      <p class="feature-card__title">Ride Share</p>
+      <p class="feature-card__desc">
+        Match with fellow students for shared rides and cut travel costs.
+      </p>
+      <span class="feature-card__link">Open →</span>
+    </a>
+
+    {# 5. Marketplace #}
+    <a href="{% url 'marketplace:listing_list' %}" class="feature-card">
+      <div class="feature-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+      </div>
+      <p class="feature-card__title">Campus Marketplace</p>
+      <p class="feature-card__desc">
+        Buy, sell, and swap textbooks, gear, and more within the campus.
+      </p>
+      <span class="feature-card__link">Open →</span>
+    </a>
+
+  </div>
+</div>
+
+{# ── Notice strip ──────────────────────────────────────────── #}
+<div class="notice-strip">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+       stroke="var(--orange)" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round"
+       style="flex-shrink: 0;">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+  <span>
+    <strong>CAMPUS is in open beta.</strong>
+    Some modules are still under development.
+  </span>
+</div>
+
+{% endblock %}

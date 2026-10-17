@@ -1,0 +1,99 @@
+{% extends "skill_exchange/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="campus-header">
+  <div class="campus-header__row">
+    <div>
+      <h1>Matches</h1>
+      <p>Browse all your matches in one place ~</p>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom: 24px;">
+    <div class="card__header">
+        <h2 class="card__title">Pending Matches</h2>
+        <div class="card__meta">New opportunities found by our engine</div>
+    </div>
+    <div class="card__body">
+        {% if pending_matches %}
+            {% for match in pending_matches %}
+                <div class="card sx-match-card" style="border: 1px solid var(--border-dark);">
+                    <div class="card__body">
+                        <div class="sx-trade-container">
+                            <div class="sx-trade-party">
+                                <div class="sx-user-label">You offer</div>
+                                <div class="sx-user-name">{{ match.user_context.my_skill.name }}</div>
+                            </div>
+                            
+                            <div class="sx-trade-arrow">⇄</div>
+                            
+                            <div class="sx-trade-party sx-trade-party--right">
+                                <div class="sx-user-label">
+                                    <a href="{% url 'accounts:profile' handle=match.user_context.partner_user.handle %}">@{{ match.user_context.partner_user.handle }}</a>
+                                    <span class="sx-partner-rating">(
+                                        {% if match.partner_sx_rating and match.partner_sx_rating > 0 %}
+                                            {{ match.partner_sx_rating|floatformat:1 }}★
+                                        {% else %}
+                                            No rating
+                                        {% endif %}
+                                    ) offers</span>
+                                </div>
+                                <div class="sx-user-name">{{ match.user_context.partner_skill.name }}</div>
+                            </div>
+                        </div>
+
+                        <div class="sx-match-bottom-row">
+                            <div class="status-indicators">
+                                {% if match.ex_p_a.author == request.user %}
+                                    <span class="status-row">You: <span class="badge {% if match.user_a_accepted %}badge--active{% endif %}">{% if match.user_a_accepted %}Accepted{% else %}Pending{% endif %}</span></span>
+                                    <span class="status-row">Partner: <span class="badge {% if match.user_b_accepted %}badge--active{% endif %}">{% if match.user_b_accepted %}Accepted{% else %}Pending{% endif %}</span></span>
+                                {% else %}
+                                    <span class="status-row">You: <span class="badge {% if match.user_b_accepted %}badge--active{% endif %}">{% if match.user_b_accepted %}Accepted{% else %}Pending{% endif %}</span></span>
+                                    <span class="status-row">Partner: <span class="badge {% if match.user_a_accepted %}badge--active{% endif %}">{% if match.user_a_accepted %}Accepted{% else %}Pending{% endif %}</span></span>
+                                {% endif %}
+                            </div>
+
+                            <div class="actions">
+                                {# Only show buttons if I haven't accepted yet #}
+                                {% if match.ex_p_a.author == request.user and not match.user_a_accepted or match.ex_p_b.author == request.user and not match.user_b_accepted %}
+                                    <form method="POST" action="{% url 'skill_exchange:match_confirm_decision' match.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" name="action" value="accepted" class="btn btn--primary btn--sm">Accept</button>
+                                        <button type="submit" name="action" value="rejected" class="btn btn--outline btn--sm">Decline</button>
+                                    </form>
+                                {% else %}
+                                    <div class="alert alert--info">
+                                        <p style="margin: 0;"><i>Waiting for partner's response...</i></p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# ── Partner message with See more/less ── #}
+                        <div class="sx-partner-message-wrap">
+                            <p>
+                                Message from <a href="{% url 'accounts:profile' handle=match.user_context.partner_user.handle %}">@{{ match.user_context.partner_user.handle }}</a> :
+                                <span class="sx-partner-message-text">{{ match.user_context.partner_post.description }}</span>
+                            </p>
+                            <button class="sx-see-more-btn" type="button">
+                                <span class="sx-see-more-label">See more</span>
+                                <span class="sx-see-more-icon">▾</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="sx-empty-state">No new matches right now. We'll notify you when someone fits your needs!</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'skill_exchange/js/see-more.js' %}"></script>
+{% endblock %}
