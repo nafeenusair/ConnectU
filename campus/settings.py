@@ -70,7 +70,6 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
-    "apps.marketplace.apps.MarketplaceConfig",
     "apps.ride_share.apps.RideShareConfig",
     "apps.rankings.apps.RankingsConfig",
     "apps.accounts.apps.AccountsConfig",

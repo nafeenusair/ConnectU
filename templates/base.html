@@ -39,7 +39,7 @@
         <span>ConnectU</span>
       </a>
 
-      {# Five platform features #}
+      {# Platform features #}
       <ul class="campus-nav__links">
         <li>
           <a href="{% url 'skill_exchange:post_list' %}"
@@ -63,12 +63,6 @@
           <a href="{% url 'ride_share:all_rides' %}"
              {% if request.resolver_match.app_name == 'ride_share' %}class="active"{% endif %}>
             Ride Share
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'marketplace:listing_list' %}"
-             {% if request.resolver_match.app_name == 'marketplace' %}class="active"{% endif %}>
-            Marketplace
           </a>
         </li>
       </ul>

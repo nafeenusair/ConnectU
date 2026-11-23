@@ -115,7 +115,12 @@ def session_list(request):
 @login_required
 @require_POST
 def match_confirm_decision(request, match_id):
-    match = get_object_or_404(ExchangeMatch, pk=match_id)
+    match = get_object_or_404(
+        ExchangeMatch.objects.filter(
+            Q(ex_p_a__author=request.user) | Q(ex_p_b__author=request.user)
+        ),
+        pk=match_id,
+    )
     action = request.POST.get("action")
 
     result = process_match_decision(match, request.user, action)
@@ -144,7 +149,12 @@ def match_confirm_decision(request, match_id):
 @require_POST
 def session_complete_decision(request, session_id):
     session = get_object_or_404(
-        ExchangeSession, pk=session_id, status=ExchangeSessionStatus.ACTIVE
+        ExchangeSession.objects.filter(
+            Q(match__ex_p_a__author=request.user)
+            | Q(match__ex_p_b__author=request.user)
+        ),
+        pk=session_id,
+        status=ExchangeSessionStatus.ACTIVE,
     )
 
     result = process_session_completion(session, request.user)

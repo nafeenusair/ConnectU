@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.db.models import Avg, Count, Q
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.utils import timezone
 
@@ -200,6 +201,12 @@ def process_match_decision(match: ExchangeMatch, user, action: str) -> dict:
       {"outcome": "pending"}
       {"outcome": "confirmed", "thread_id": <int>}
     """
+    if user != match.ex_p_a.author and user != match.ex_p_b.author:
+        raise PermissionDenied("You are not a participant in this match.")
+
+    if action not in {"accepted", "rejected"}:
+        raise PermissionDenied("Invalid match decision.")
+
     if action == "rejected":
         with transaction.atomic():
             locked = ExchangeMatch.objects.select_for_update().get(pk=match.pk)
@@ -287,6 +294,12 @@ def process_session_completion(session: ExchangeSession, user) -> dict:
 
     Returns: {"fully_completed": bool}
     """
+    if (
+        user != session.match.ex_p_a.author
+        and user != session.match.ex_p_b.author
+    ):
+        raise PermissionDenied("You are not a participant in this session.")
+
     fully_completed = False
     other_user = None
     user_display = user.handle or user.email
