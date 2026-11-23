@@ -130,7 +130,11 @@ def register(request):
     form = RegisterForm(request.POST or None)
 
     if form.is_valid():
-        form.save()
+        user = form.save()
+        messages.success(
+            request,
+            "Your account was successfully created. Please log in to continue.",
+        )
         return redirect("accounts:login")
 
     return render(request, "accounts/register.html", {"form": form})

@@ -40,7 +40,31 @@ if (
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes", "on")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "0.0.0.0").split(",")
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv(
+        "ALLOWED_HOSTS",
+        ",".join(
+            host
+            for host in ("127.0.0.1", "localhost", os.getenv("RENDER_EXTERNAL_HOSTNAME"))
+            if host
+        ),
+    ).split(",")
+    if host.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "CSRF_TRUSTED_ORIGINS",
+        (
+            f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME')}"
+            if os.getenv("RENDER_EXTERNAL_HOSTNAME")
+            else ""
+        ),
+    ).split(",")
+    if origin.strip()
+]
 
 
 # Application definition
@@ -68,6 +92,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -99,14 +124,23 @@ WSGI_APPLICATION = "campus.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
+DB_SSLMODE = os.getenv(
+    "DB_SSLMODE",
+    "disable" if DB_HOST.lower() in ("127.0.0.1", "localhost", "::1") else "require",
+)
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DB_NAME"),
         "USER": os.getenv("DB_USER"),
         "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+        "HOST": DB_HOST,
         "PORT": os.getenv("DB_PORT", "5432"),
+        "OPTIONS": {
+            "sslmode": DB_SSLMODE,
+        },
     }
 }
 
@@ -149,11 +183,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_URL = "media/"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = int(
+    os.getenv("SECURE_HSTS_SECONDS", "31536000" if not DEBUG else "0")
+)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_SECONDS > 0
+SECURE_HSTS_PRELOAD = SECURE_HSTS_SECONDS > 0
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/"

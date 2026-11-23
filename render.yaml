@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: campus
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: python manage.py migrate && gunicorn --bind 0.0.0.0:$PORT campus.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DB_SSLMODE
+        value: require
+      - key: DB_NAME
+        fromDatabase:
+          name: campus-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: campus-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: campus-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: campus-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: campus-db
+          property: port
+      - key: SECURE_HSTS_SECONDS
+        value: "31536000"
+databases:
+  - name: campus-db
+    plan: free

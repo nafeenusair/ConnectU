@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 import re
 
 User = get_user_model()
@@ -80,6 +81,12 @@ class RegisterForm(forms.ModelForm):
         except ValueError as e:
             raise forms.ValidationError(str(e))
         return email.strip().lower()
+
+    def clean_password(self):
+        password = self.cleaned_data.get("password")
+        if password:
+            validate_password(password, self.instance)
+        return password
 
     def clean(self):
         cleaned_data     = super().clean()

@@ -38,7 +38,7 @@ If your environment uses pinned versions, you may also consult `requirements_ver
 - The project may read environment variables for secret keys, database settings, etc. Create a `.env` file or set variables in your shell. Example variables you might need:
 
 ```
-DJANGO_SECRET_KEY=your-secret-key
+SECRET_KEY=your-secret-key
 DEBUG=True
 DATABASE_URL=postgres://user:pass@localhost:5432/dbname
 ```
@@ -79,6 +79,36 @@ python manage.py runserver
 ```
 
 Visit `http://127.0.0.1:8000/` in your browser.
+
+**Production deployment**
+
+Use Gunicorn as the production server:
+
+```bash
+gunicorn campus.wsgi:application
+```
+
+WhiteNoise serves collected static files. User-uploaded media is stored under
+`MEDIA_ROOT` by default; hosted deployments should use persistent object
+storage because many free web services have ephemeral disks.
+
+For Render, use:
+
+```text
+Build: pip install -r requirements.txt && python manage.py collectstatic --noinput
+Start: python manage.py migrate && gunicorn campus.wsgi:application
+```
+
+The included `render.yaml` provisions a PostgreSQL database and wires its
+connection variables into the web service. The settings automatically trust
+Render's assigned hostname; override `ALLOWED_HOSTS` and
+`CSRF_TRUSTED_ORIGINS` in the service environment when using a custom domain.
+Set `DB_SSLMODE=require` for a hosted PostgreSQL service. Create an
+administrator after the first migration with `python manage.py createsuperuser`.
+
+Uploaded media remains on the service filesystem. Configure persistent object
+storage (or a paid persistent disk) before relying on user uploads in
+production; the free Render filesystem is ephemeral.
 
 **Run tests**
 Run the Django test suite:
